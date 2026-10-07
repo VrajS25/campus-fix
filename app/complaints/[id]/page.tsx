@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -31,8 +31,9 @@ type Update = {
   created_at: string;
 };
 
-export default function ComplaintDetailsPage() {
+function ComplaintDetailsContent() {
   const params = useParams();
+
   const id = params.id as string;
 
   const [complaint, setComplaint] = useState<Complaint | null>(null);
@@ -124,7 +125,6 @@ export default function ComplaintDetailsPage() {
 
         {/* Header */}
         <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6 mb-6 shadow-xl">
-
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-5">
 
             <div>
@@ -193,6 +193,7 @@ export default function ComplaintDetailsPage() {
             <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6 shadow-xl">
 
               <div className="flex items-center justify-between mb-6">
+
                 <h2 className="font-semibold text-white">
                   Complaint Timeline
                 </h2>
@@ -201,6 +202,7 @@ export default function ComplaintDetailsPage() {
                   {updates.length} update
                   {updates.length !== 1 ? "s" : ""}
                 </span>
+
               </div>
 
               {updates.length === 0 ? (
@@ -227,6 +229,7 @@ export default function ComplaintDetailsPage() {
                               : "bg-blue-500/10"
                           }`}
                         >
+
                           {index === updates.length - 1 &&
                           complaint.status === "Resolved" ? (
                             <CheckCircle2
@@ -239,6 +242,7 @@ export default function ComplaintDetailsPage() {
                               className="text-blue-400"
                             />
                           )}
+
                         </div>
 
                         {index !== updates.length - 1 && (
@@ -354,5 +358,21 @@ export default function ComplaintDetailsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ComplaintDetailsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#0b1120] flex items-center justify-center">
+          <p className="text-slate-400">
+            Loading complaint...
+          </p>
+        </div>
+      }
+    >
+      <ComplaintDetailsContent />
+    </Suspense>
   );
 }
